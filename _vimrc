@@ -5,41 +5,32 @@ behave mswin
 
 filetype off
 execute pathogen#infect()
-"set rtp+=$VIMRUNTIME/vimfiles/bundle/Vundle.vim
-"call vundle#begin('$VIMRUNTIME/vimfiles/bundle')
-"Plugin 'gmarik/Vundle.vim'
-"Plugin 'scrooloose/nerdtree'
-"Plugin 'vim-scripts/SuperTab'
-"Plugin 'vim-scripts/TagHighlight'
-"Plugin 'vim-scripts/Tagbar'
-"Plugin 'vim-scripts/OmniCppComplete'
-"Plugin 'scrooloose/syntastic'
-"Plugin 'klen/python-mode'
-"Plugin 'vim-scripts/molokai'
-"Plugin 'vim-scripts/c.vim'
-" Plugin 'Valloric/YouCompleteMe'
-"call vundle#end()
 syntax on
 filetype plugin indent on
-set noundofile
+"set noundofile
+set rnu
+set st=4
+set ai
+set lbr
+set ignorecase
+set incsearch
+set nobackup
+set nowb
+set autochdir
 set tabstop=4
 set et
-set autoindent
 set shiftround "round indent to multiple of 'shiftwidth'
 set nu
-set ai
 set si
 set tw=79
 set expandtab "insert spaces when hitting TABS
+"set et
 set sw=4
 set softtabstop=4 "indert/delete 4 spaces when hit tabs
-set incsearch
 set showmatch
 set matchtime=5
-set ignorecase
-set nobackup
-set nowb
 set nowrap
+
 if has('gui_running')
     set background=light
     set guioptions-=T "no toolbar
@@ -53,30 +44,6 @@ set fileencoding=utf-8
 set fileencodings=utf-8,gbk,gb2312,big5,latin1
 let autosave=5
 
-set diffexpr=MyDiff()
-function MyDiff()
-  let opt = '-a --binary '
-  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-  let arg1 = v:fname_in
-  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-  let arg2 = v:fname_new
-  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-  let arg3 = v:fname_out
-  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-  let eq = ''
-  if $VIMRUNTIME =~ ' '
-    if &sh =~ '\<cmd'
-      let cmd = '""' . $VIMRUNTIME . '\diff"'
-      let eq = '"'
-    else
-      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-    endif
-  else
-    let cmd = $VIMRUNTIME . '\diff'
-  endif
-  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
-endfunction
 " NERD tree
 let NERDChristmasTree=0
 let NERDTreeWinSize=35
@@ -90,21 +57,45 @@ autocmd vimenter * if !argc() | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 " Open a NERDTree
 nmap <F5> :NERDTreeToggle<cr>
+" ctags
+set tags=tags
+set tags+=./tags
+map <F7> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+imap <F7> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 " Tagbar
 let g:tagbar_width=20
 let g:tagbar_autofocus=1
 nmap <F6> :TagbarToggle<CR>
-
-" syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
+" cscope
+nnoremap <leader>fa :call cscope#findInteractive(expand('<cword>'))<CR>
+nnoremap <leader>l :call ToggleLocationList()<CR>
+" s: Find this C symbol
+nnoremap  <leader>fs :call cscope#find('s', expand('<cword>'))<CR>
+" g: Find this definition
+nnoremap  <leader>fg :call cscope#find('g', expand('<cword>'))<CR>
+" d: Find functions called by this function
+nnoremap  <leader>fd :call cscope#find('d', expand('<cword>'))<CR>
+" c: Find functions calling this function
+nnoremap  <leader>fc :call cscope#find('c', expand('<cword>'))<CR>
+" t: Find this text string
+nnoremap  <leader>ft :call cscope#find('t', expand('<cword>'))<CR>
+" e: Find this egrep pattern
+nnoremap  <leader>fe :call cscope#find('e', expand('<cword>'))<CR>
+" f: Find this file
+nnoremap  <leader>ff :call cscope#find('f', expand('<cword>'))<CR>
+" i: Find files #including this file
+nnoremap  <leader>fi :call cscope#find('i', expand('<cword>'))<CR>
+""""""""""""""""""""""""""""""
+" BufExplorer
+""""""""""""""""""""""""""""""
+let g:bufExplorerDefaultHelp=0       " Do not show default help.
+let g:bufExplorerShowRelativePath=1  " Show relative paths.
+let g:bufExplorerSortBy='mru'        " Sort by most recently used.
+let g:bufExplorerSplitRight=0        " Split left.
+let g:bufExplorerSplitVertical=1     " Split vertically.
+let g:bufExplorerSplitVertSize = 30  " Split width
+let g:bufExplorerUseCurrentWindow=1  " Open in new window.
+autocmd BufWinEnter \[Buf\ List\] setl nonumber 
 " 定义快捷键的前缀，即<Leader>
 let mapleader=";"
 
